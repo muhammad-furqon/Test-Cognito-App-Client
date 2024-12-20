@@ -27,22 +27,22 @@ export class CustomAuthStack extends Construct {
     userPool.addClient
 
     // New User Pool Client
-    // new cognito.UserPoolClient(this, 'CustomUserPoolClient', {
-    //     userPool,
-    //     userPoolClientName: 'MyCustomClient',
-    //     generateSecret: false,
-    //     authFlows: {
-    //         userPassword: true,
-    //         adminUserPassword: true,
-    //     },
-    //     oAuth: {
-    //         callbackUrls: ['https://main.d2d1d8kuit8n8u.amplifyapp.com/'], //hard coded for now
-    //         flows: {
-    //         authorizationCodeGrant: true,
-    //         },
-    //         scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
-    //     },
-    // }); 
+    new cognito.UserPoolClient(this, 'CustomUserPoolClient', {
+        userPool,
+        userPoolClientName: 'MyCustomClient',
+        generateSecret: false,
+        authFlows: {
+            userPassword: true,
+            adminUserPassword: true,
+        },
+        oAuth: {
+            callbackUrls: ['https://main.d2d1d8kuit8n8u.amplifyapp.com/'], //hard coded for now
+            flows: {
+            authorizationCodeGrant: true,
+            },
+            scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
+        },
+    }); 
 
     new cognito.UserPoolDomain(this, 'CustomUserPoolDomain',{
         userPool,
