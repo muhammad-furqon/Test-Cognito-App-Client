@@ -24,10 +24,8 @@ export class CustomAuthStack extends Construct {
     //     '5g5dpm896rndpqbdi7c94gc5uo' //hard coded for now
     // );
 
-    userPool.addClient
-
     // New User Pool Client
-    new cognito.UserPoolClient(this, 'CustomUserPoolClient', {
+    const customUserPoolClient = new cognito.UserPoolClient(this, 'CustomUserPoolClient', {
         userPool,
         userPoolClientName: 'MyCustomClient',
         generateSecret: false,
@@ -35,16 +33,18 @@ export class CustomAuthStack extends Construct {
             userPassword: true,
             adminUserPassword: true,
         },
+        //Set callback URL and default Redirect Uri
         oAuth: {
             callbackUrls: ['https://main.d2d1d8kuit8n8u.amplifyapp.com/'], //hard coded for now
+            defaultRedirectUri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/', //hard coded for now
             flows: {
-            authorizationCodeGrant: true,
+                authorizationCodeGrant: true,
             },
             scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
         },
     }); 
 
-    new cognito.UserPoolDomain(this, 'CustomUserPoolDomain',{
+    const customUserPoolDomain =new cognito.UserPoolDomain(this, 'CustomUserPoolDomain',{
         userPool,
         cognitoDomain:{
             domainPrefix: 'lambda-furl-d2d1d8kuit8n8u' //hard coded for now
