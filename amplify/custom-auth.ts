@@ -35,7 +35,7 @@ export class CustomAuthStack extends Construct {
         },
         //Set callback URL and default Redirect Uri
         oAuth: {
-            callbackUrls: ['https://main.d2d1d8kuit8n8u.amplifyapp.com/'], //hard coded for now
+            callbackUrls: ['https://main.d2d1d8kuit8n8u.amplifyapp.com/', 'http://localhost:5173/'], //hard coded for now
             defaultRedirectUri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/', //hard coded for now
             flows: {
                 authorizationCodeGrant: true,

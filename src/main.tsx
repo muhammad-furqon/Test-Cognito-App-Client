@@ -14,6 +14,7 @@ const cognitoAuthConfig = {
   authority: "https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_KYJVPWPTn",
   client_id: "5klenrf64bb1nv9egl2t2ktb4g",
   redirect_uri: "https://main.d2d1d8kuit8n8u.amplifyapp.com/", //hard coded for now
+  // redirect_uri: "http://localhost:5173/", // for dev in local
   response_type: "code",
   scope: "email openid",
   // scope: "aws.cognito.signin.user.admin email openid",

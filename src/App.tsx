@@ -23,13 +23,14 @@ function App() {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
+  console.log(`ID Token: ${auth.user?.id_token},\nAccess Token: ${auth.user?.access_token},\nRefresh Token: ${auth.user?.refresh_token}`);
   if (auth.isAuthenticated) {
     return (
       <div>
         <pre> Hello: {auth.user?.profile.email} </pre>
-        <pre> ID Token: {auth.user?.id_token} </pre>
+        {/* <pre> ID Token: {auth.user?.id_token} </pre>
         <pre> Access Token: {auth.user?.access_token} </pre>
-        <pre> Refresh Token: {auth.user?.refresh_token} </pre>
+        <pre> Refresh Token: {auth.user?.refresh_token} </pre> */}
 
         <button onClick={() => auth.removeUser()}>Sign out</button>
       </div>
