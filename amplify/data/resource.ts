@@ -1,4 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { testFunction } from "../functions/test-function/resource";
+import { LambdaResult } from "../functions/test-function/handler";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -12,6 +14,17 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+  testFunction: a
+    .query()
+    .arguments({
+      code: a.string(),
+    })
+    .returns(a.customType<LambdaResult>({
+      event: a.json(),
+      context: a.json()
+    }))
+    .handler(a.handler.function(testFunction))
+    .authorization((allow) => [allow.authenticated()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
