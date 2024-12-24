@@ -8,9 +8,13 @@ import { CustomAuthStack } from './custom-auth';
 
 import { CognitoIdentityProviderClient, UpdateUserPoolClientCommand } from "@aws-sdk/client-cognito-identity-provider";
 
+//Test function
+import { testFunction } from './functions/test-function/resource';;
+
 const backend = defineBackend({
   auth,
   data,
+  testFunction,
 });
 
 // app-client
