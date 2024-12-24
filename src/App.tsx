@@ -3,9 +3,35 @@
 // import { generateClient } from "aws-amplify/data";
 import { useAuth } from "react-oidc-context";
 
+// Get query variable
+function getQueryVariable(variable: string)
+{
+  var query = window.location.search.substring(1);
+  // console.log(query)//"app=article&act=news_content&aid=160990"
+  var vars = query.split("&");
+  // console.log(vars) //[ 'app=article', 'act=news_content', 'aid=160990' ]
+  for (var i=0;i<vars.length;i++) {
+              var pair = vars[i].split("=");
+              // console.log(pair)//[ 'app', 'article' ][ 'act', 'news_content' ][ 'aid', '160990' ] 
+  if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+
 // app-client
 // App.js
 function App() {
+  // const value = `; ${document.cookie}`;
+  // const parts = value.split("; code=");
+  // let code = '';
+  // if (parts.length === 2) {
+  //   const poppedPart = parts.pop();
+  //   if (poppedPart) {
+  //     code = poppedPart.split(';')[0];
+  //   }
+  // }
+  const code = getQueryVariable('code');
+
   const auth = useAuth();
 
   const signOutRedirect = () => {
@@ -23,6 +49,8 @@ function App() {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
+  // console.log(`Code: ${code},\nQuery var: ${queryVar},\nLocation: ${location}`);
+  console.log(`Code ${code}`);
   console.log(`ID Token: ${auth.user?.id_token},\nAccess Token: ${auth.user?.access_token},\nRefresh Token: ${auth.user?.refresh_token}`);
   if (auth.isAuthenticated) {
     return (
