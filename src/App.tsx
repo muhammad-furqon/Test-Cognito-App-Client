@@ -26,17 +26,23 @@ function getQueryVariable(variable: string)
     return(null);
 }
 
-//Call backend test function using the queries
+//Call backend testFunction using the queries
 async function testFunction(code: string){
-  const response = await client.queries.testFunction(
-    {
-      code: code 
-    },
-    // { 
-    //   authMode: 'oidc'
-    // }
-  )
-  console.log(response);
+  try {
+    const response = await client.queries.testFunction(
+      {
+        code: code 
+      },
+      // { 
+      //   authMode: 'oidc'
+      // }
+    )
+    console.log(response);
+    console.log(JSON.parse(response.data?.context));
+    console.log(JSON.parse(response.data?.event));
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 // function getCookieValue(name:string){
