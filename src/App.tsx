@@ -2,6 +2,14 @@
 // import type { Schema } from "../amplify/data/resource";
 // import { generateClient } from "aws-amplify/data";
 import { useAuth } from "react-oidc-context";
+import outputs from "../amplify_outputs.json"
+import { Amplify } from "aws-amplify"
+import { generateClient } from "aws-amplify/api"
+import type { Schema } from "../amplify/data/resource"
+// import styled from 'styled-components';
+
+Amplify.configure(outputs)
+const client = generateClient<Schema>()
 
 // Get query variable
 function getQueryVariable(variable: string)
@@ -11,26 +19,38 @@ function getQueryVariable(variable: string)
   var vars = query.split("&");
   // console.log(vars) //[ 'app=article', 'act=news_content', 'aid=160990' ]
   for (var i=0;i<vars.length;i++) {
-              var pair = vars[i].split("=");
-              // console.log(pair)//[ 'app', 'article' ][ 'act', 'news_content' ][ 'aid', '160990' ] 
-  if(pair[0] == variable){return pair[1];}
-    }
-    return(false);
+    var pair = vars[i].split("=");
+    // console.log(pair)//[ 'app', 'article' ][ 'act', 'news_content' ][ 'aid', '160990' ] 
+    if(pair[0] == variable){return pair[1];}
+  }
+    return(null);
 }
+
+//Call backend test function using the queries
+async function testFunction(code: string){
+  const response = await client.queries.testFunction(
+    {
+      code: code 
+    },
+    // { 
+    //   authMode: 'oidc'
+    // }
+  )
+  console.log(response);
+}
+
+// function getCookieValue(name:string){
+//   console.log(document.cookie);
+//   const cookies = document.cookie.split('; ');
+//   const cookie = cookies.find(row => row.startsWith(`${name}=`));
+//   return cookie ? cookie.split('=')[1] : null;
+// };
 
 // app-client
 // App.js
 function App() {
-  // const value = `; ${document.cookie}`;
-  // const parts = value.split("; code=");
-  // let code = '';
-  // if (parts.length === 2) {
-  //   const poppedPart = parts.pop();
-  //   if (poppedPart) {
-  //     code = poppedPart.split(';')[0];
-  //   }
-  // }
   const code = getQueryVariable('code');
+  // const code = getCookieValue('code')
 
   const auth = useAuth();
 
@@ -59,6 +79,11 @@ function App() {
         {/* <pre> ID Token: {auth.user?.id_token} </pre>
         <pre> Access Token: {auth.user?.access_token} </pre>
         <pre> Refresh Token: {auth.user?.refresh_token} </pre> */}
+
+
+        {code && (
+          <button onClick={() => testFunction(code)}>Test function</button>
+        )}
 
         <button onClick={() => auth.removeUser()}>Sign out</button>
       </div>

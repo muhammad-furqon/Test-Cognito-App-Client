@@ -24,7 +24,7 @@ const schema = a.schema({
       context: a.json()
     }))
     .handler(a.handler.function(testFunction))
-    .authorization((allow) => [allow.authenticated()]),
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
