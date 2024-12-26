@@ -28,7 +28,7 @@ export class CustomAuthStack extends Construct {
     const customUserPoolClient = new cognito.UserPoolClient(this, 'CustomUserPoolClient', {
         userPool,
         userPoolClientName: 'MyCustomClient',
-        generateSecret: false,
+        generateSecret: true,
         authFlows: {
             userPassword: true,
             adminUserPassword: true,
