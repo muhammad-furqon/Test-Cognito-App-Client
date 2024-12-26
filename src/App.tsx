@@ -29,20 +29,68 @@ function getQueryVariable(variable: string)
 //Call backend testFunction using the queries
 async function testFunction(code: string){
   try {
-    const response = await client.queries.testFunction(
-      {
-        code: code 
+    // const response = await client.queries.testFunction(
+    //   {
+    //     code: code 
+    //   },
+    //   // { 
+    //   //   authMode: 'oidc'
+    //   // }
+    // )
+    // console.log(response);
+    // console.log(JSON.parse(response.data?.context));
+    // console.log(JSON.parse(response.data?.event));
+
+    //Hard coded for now
+    // const options = {
+    //   // uri: 'https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token',
+    //   // transform: _include_headers,
+    //   method: 'POST',
+    //   headers: {
+    //       'Content-Type': 'application/x-www-form-urlencoded',
+    //       // 'Authorization': 'Basic ' + secret_hash
+    //   },
+    //   body: {
+    //       'grant_type': 'authorization_code',
+    //       'client_id': '3mkraeveoupe6pdobo977hjgr7',
+    //       'code': code,
+    //       'redirect_uri': 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
+    //   }
+    // };
+
+    //Hard coded for now
+    const clientId = '3mkraeveoupe6pdobo977hjgr7';
+    const clientSecret = 'g6dpi4qn5qgm1e81t6vmbfsda64bhfm8bhdfr6ngrhtg3kep6jg';
+    const credentials = `${clientId}:${clientSecret}`;
+
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      code: code,
+      // redirect_uri: 'http://localhost:5173/'
+      redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
+    });
+    
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${btoa(credentials)}`,
       },
-      // { 
-      //   authMode: 'oidc'
-      // }
-    )
-    console.log(response);
-    console.log(JSON.parse(response.data?.context));
-    console.log(JSON.parse(response.data?.event));
-  } catch (error) {
-    console.error(error)
-  }
+      body: body.toString()
+    }
+
+    try{
+        console.log('options', options);
+        const response = await fetch('http://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
+        console.log(response);
+    }
+    catch {
+        console.log("failed to exchange cognito code to token");
+    }
+    } catch (error) {
+      console.error(error)
+    }
 }
 
 // function getCookieValue(name:string){
@@ -61,7 +109,7 @@ function App() {
   const auth = useAuth();
 
   const signOutRedirect = () => {
-    const clientId = "5klenrf64bb1nv9egl2t2ktb4g";
+    const clientId = "3mkraeveoupe6pdobo977hjgr7";
     const logoutUri = "<logout uri>";
     const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
