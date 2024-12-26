@@ -22,9 +22,9 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
 
     const body = new URLSearchParams({
       grant_type: 'authorization_code',
-      client_id: clientId,
+      // client_id: clientId,
       code: code,
-      client_secret: clientSecret,
+      // client_secret: clientSecret,
       redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
     });
     
@@ -42,8 +42,9 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
         const response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
         console.log(response);
     }
-    catch {
+    catch (error){
         console.log("failed to exchange cognito code to token");
+        console.log('Error: ', error);
     }
   } catch (error) {
     console.log('Error: ', error);
