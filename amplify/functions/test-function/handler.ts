@@ -24,6 +24,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
       grant_type: 'authorization_code',
       client_id: clientId,
       code: code,
+      client_secret: clientSecret,
       // redirect_uri: 'http://localhost:5173/'
       redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
     });

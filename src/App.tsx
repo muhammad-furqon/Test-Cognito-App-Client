@@ -29,6 +29,7 @@ function getQueryVariable(variable: string)
 //Call backend testFunction using the queries
 async function testFunction(code: string){
   try {
+    //Call testFunction 
     const response = await client.queries.testFunction(
       {
         code: code 
@@ -38,8 +39,10 @@ async function testFunction(code: string){
       // }
     )
     console.log(response);
-    console.log(JSON.parse(response.data?.context));
-    console.log(JSON.parse(response.data?.event));
+    if(response.data){
+      console.log(JSON.parse(response.data?.context));
+      console.log(JSON.parse(response.data?.event));
+    }
 
     //Hard coded for now
     // const options = {
@@ -67,7 +70,7 @@ async function testFunction(code: string){
       grant_type: 'authorization_code',
       client_id: clientId,
       code: code,
-      // redirect_uri: 'http://localhost:5173/'
+      // redirect_uri: 'http://localhost:5173/', 
       redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
     });
     
