@@ -25,7 +25,6 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
       client_id: clientId,
       code: code,
       client_secret: clientSecret,
-      // redirect_uri: 'http://localhost:5173/'
       redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
     });
     
@@ -47,7 +46,8 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
         console.log("failed to exchange cognito code to token");
     }
   } catch (error) {
-    console.error(error)
+    console.log('Error: ', error);
+    console.error(error);
   }
 
   console.log('Code: ', code);
