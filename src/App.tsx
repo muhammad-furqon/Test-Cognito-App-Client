@@ -29,17 +29,17 @@ function getQueryVariable(variable: string)
 //Call backend testFunction using the queries
 async function testFunction(code: string){
   try {
-    // const response = await client.queries.testFunction(
-    //   {
-    //     code: code 
-    //   },
-    //   // { 
-    //   //   authMode: 'oidc'
-    //   // }
-    // )
-    // console.log(response);
-    // console.log(JSON.parse(response.data?.context));
-    // console.log(JSON.parse(response.data?.event));
+    const response = await client.queries.testFunction(
+      {
+        code: code 
+      },
+      // { 
+      //   authMode: 'oidc'
+      // }
+    )
+    console.log(response);
+    console.log(JSON.parse(response.data?.context));
+    console.log(JSON.parse(response.data?.event));
 
     //Hard coded for now
     // const options = {
