@@ -42,6 +42,7 @@ async function testFunction(code: string){
     if(response.data){
       console.log('Backend Context: ',JSON.parse(response.data?.context));
       console.log('Backend Event: ',JSON.parse(response.data?.event));
+      console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
     }
 
     //Hard coded for now

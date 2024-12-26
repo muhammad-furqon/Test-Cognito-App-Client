@@ -21,7 +21,8 @@ const schema = a.schema({
     })
     .returns(a.customType<LambdaResult>({
       event: a.json(),
-      context: a.json()
+      context: a.json(),
+      tokenResponse: a.json(),
     }))
     .handler(a.handler.function(testFunction))
     .authorization((allow) => [allow.publicApiKey()]),

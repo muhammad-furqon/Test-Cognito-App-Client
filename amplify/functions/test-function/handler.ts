@@ -4,6 +4,7 @@ import type { Handler } from 'aws-lambda';
 export type LambdaResult = {
   event: any;    // 'any' because the shape of event depends on the trigger
   context: any;  // 'any' for the same reason
+  tokenResponse: any;
 };
 
 // var _include_headers = function(body:any, response:any, resolveWithFullResponse) {
@@ -13,7 +14,7 @@ export type LambdaResult = {
 export const handler: Handler = async (event, context): Promise<LambdaResult> => {
   // your function code goes here
   const { code } = event.arguments;
-  
+  let response = null;
   try{
     //Hard coded for now
     const clientId = '3mkraeveoupe6pdobo977hjgr7';
@@ -39,7 +40,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
 
     try{
         console.log('options', options);
-        const response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
+        response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
         console.log(response);
     }
     catch (error){
@@ -55,5 +56,5 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
   console.log('Event: ', event);
   console.log('Context: ', context)
 
-  return {event: event, context:context};
+  return {event: event, context:context, tokenResponse: response};
 };
