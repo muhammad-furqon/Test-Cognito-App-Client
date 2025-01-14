@@ -10,6 +10,7 @@ import { AuthProvider } from "react-oidc-context";
 Amplify.configure(outputs);
 
 // app-client
+// dev: auth currently not in used
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_KYJVPWPTn",
   client_id: "3mkraeveoupe6pdobo977hjgr7",

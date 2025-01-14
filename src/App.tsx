@@ -30,20 +30,20 @@ function getQueryVariable(variable: string)
 async function testFunction(code: string){
   try {
     //Call testFunction 
-    const response = await client.queries.testFunction(
-      {
-        code: code 
-      },
-      // { 
-      //   authMode: 'oidc'
-      // }
-    )
-    console.log('Backend Response: ',response);
-    if(response.data){
-      console.log('Backend Context: ',JSON.parse(response.data?.context));
-      console.log('Backend Event: ',JSON.parse(response.data?.event));
-      console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
-    }
+    // const response = await client.queries.testFunction(
+    //   {
+    //     code: code 
+    //   },
+    //   // { 
+    //   //   authMode: 'oidc'
+    //   // }
+    // )
+    // console.log('Backend Response: ',response);
+    // if(response.data){
+    //   console.log('Backend Context: ',JSON.parse(response.data?.context));
+    //   console.log('Backend Event: ',JSON.parse(response.data?.event));
+    //   console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
+    // }
 
     //Hard coded for now
     // const options = {
@@ -71,8 +71,8 @@ async function testFunction(code: string){
       grant_type: 'authorization_code',
       client_id: clientId,
       code: code,
-      // redirect_uri: 'http://localhost:5173/', 
-      redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
+      redirect_uri: 'http://localhost:5173/', 
+      // redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
     });
     
     const options = {
@@ -84,10 +84,20 @@ async function testFunction(code: string){
       body: body.toString()
     }
 
+    async function readStream(readableStream: any) {
+      for await (const chunk of readableStream) {
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(chunk);
+        return JSON.parse(text);
+      }
+    }
+
     try{
         console.log('options', options);
         const response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
-        console.log('response cognito',response);
+        console.log('response cognito', response);
+        const tokenResponse = await readStream(response.body);
+        console.log('response token', tokenResponse)
     }
     catch (error){
         console.log("failed to exchange cognito code to token");
@@ -110,32 +120,32 @@ async function testFunction(code: string){
 // App.js
 function App() {
   const code = getQueryVariable('code');
-  // const code = getCookieValue('code')
+  // // const code = getCookieValue('code')
 
-  const auth = useAuth();
+  // dev: auth currently not in used
+  // // const auth = useAuth();
 
   const signOutRedirect = () => {
     const clientId = "3mkraeveoupe6pdobo977hjgr7";
     const logoutUri = "<logout uri>";
-    const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    // const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    const cognitoDomain = "http://localhost:5173/";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
-  if (auth.isLoading) {
-    return <div>Loading...</div>;
-  }
+  const signInRedirect = () => {
+    const clientId = "3mkraeveoupe6pdobo977hjgr7";
+    // const redirectUri = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    const redirectUri = "http://localhost:5173/";
+    window.location.assign(`https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/login?client_id=${clientId}&response_type=code&scope=email+openid&redirect_uri=${redirectUri}`);
+  };
 
-  if (auth.error) {
-    return <div>Encountering error... {auth.error.message}</div>;
-  }
-
-  // console.log(`Code: ${code},\nQuery var: ${queryVar},\nLocation: ${location}`);
+  // // console.log(`Code: ${code},\nQuery var: ${queryVar},\nLocation: ${location}`);
   console.log(`Code ${code}`);
-  console.log(`ID Token: ${auth.user?.id_token},\nAccess Token: ${auth.user?.access_token},\nRefresh Token: ${auth.user?.refresh_token}`);
-  if (auth.isAuthenticated) {
+  if(code){
     return (
       <div>
-        <pre> Hello: {auth.user?.profile.email} </pre>
+        <pre> Code: {code} </pre>
         {/* <pre> ID Token: {auth.user?.id_token} </pre>
         <pre> Access Token: {auth.user?.access_token} </pre>
         <pre> Refresh Token: {auth.user?.refresh_token} </pre> */}
@@ -145,54 +155,17 @@ function App() {
           <button onClick={() => testFunction(code)}>Test function</button>
         )}
 
-        <button onClick={() => auth.removeUser()}>Sign out</button>
+        <button onClick={() => signOutRedirect()}>Sign out</button>
       </div>
     );
   }
 
   return (
     <div>
-      <button onClick={() => auth.signinRedirect()}>Sign in</button>
+      <button onClick={() => signInRedirect()}>Sign in</button>
       <button onClick={() => signOutRedirect()}>Sign out</button>
     </div>
   );
 }
   
 export default App;
-
-// const client = generateClient<Schema>();
-
-// function App() {
-//   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-
-//   useEffect(() => {
-//     client.models.Todo.observeQuery().subscribe({
-//       next: (data) => setTodos([...data.items]),
-//     });
-//   }, []);
-
-//   function createTodo() {
-//     client.models.Todo.create({ content: window.prompt("Todo content") });
-//   }
-
-//   return (
-//     <main>
-//       <h1>My todos</h1>
-//       <button onClick={createTodo}>+ new</button>
-//       <ul>
-//         {todos.map((todo) => (
-//           <li key={todo.id}>{todo.content}</li>
-//         ))}
-//       </ul>
-//       <div>
-//         🥳 App successfully hosted. Try creating a new todo.
-//         <br />
-//         <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-//           Review next step of this tutorial.
-//         </a>
-//       </div>
-//     </main>
-//   );
-// }
-
-// export default App;
