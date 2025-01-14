@@ -131,15 +131,15 @@ function App() {
   const signOutRedirect = () => {
     const clientId = "3mkraeveoupe6pdobo977hjgr7";
     const logoutUri = "<logout uri>";
-    // const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
-    const cognitoDomain = "http://localhost:5173/";
+    const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    // const cognitoDomain = "http://localhost:5173/";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
   const signInRedirect = () => {
     const clientId = "3mkraeveoupe6pdobo977hjgr7";
-    // const redirectUri = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
-    const redirectUri = "http://localhost:5173/";
+    const redirectUri = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    // const redirectUri = "http://localhost:5173/";
     window.location.assign(`https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/login?client_id=${clientId}&response_type=code&scope=email+openid&redirect_uri=${redirectUri}`);
   };
 

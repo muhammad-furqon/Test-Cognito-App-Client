@@ -23,7 +23,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
     const body = new URLSearchParams({
       grant_type: 'authorization_code',
       code: code,
-      // client_id: clientId,
+      client_id: clientId,
       // client_secret: clientSecret,
       redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
     });
@@ -32,7 +32,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${Buffer.from(credentials).toString('base64')}`,
+        // 'Authorization': `Basic ${Buffer.from(credentials).toString('base64')}`,
       },
       body: body.toString()
     }
