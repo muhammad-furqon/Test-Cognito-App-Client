@@ -32,7 +32,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        // 'Authorization': `Basic ${Buffer.from(credentials).toString('base64')}`,
+        'Authorization': `Basic ${Buffer.from(credentials).toString('base64')}`,
       },
       body: body.toString()
     }
