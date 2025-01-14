@@ -1,7 +1,7 @@
 // import { useEffect, useState } from "react";
 // import type { Schema } from "../amplify/data/resource";
 // import { generateClient } from "aws-amplify/data";
-import { useAuth } from "react-oidc-context";
+// import { useAuth } from "react-oidc-context";
 import outputs from "../amplify_outputs.json"
 import { Amplify } from "aws-amplify"
 import { generateClient } from "aws-amplify/api"
@@ -30,20 +30,23 @@ function getQueryVariable(variable: string)
 async function testFunction(code: string){
   try {
     //Call testFunction 
-    // const response = await client.queries.testFunction(
-    //   {
-    //     code: code 
-    //   },
-    //   // { 
-    //   //   authMode: 'oidc'
-    //   // }
-    // )
-    // console.log('Backend Response: ',response);
-    // if(response.data){
-    //   console.log('Backend Context: ',JSON.parse(response.data?.context));
-    //   console.log('Backend Event: ',JSON.parse(response.data?.event));
-    //   console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
-    // }
+    const response = await client.queries.testFunction(
+      {
+        code: code 
+      },
+      // { 
+      //   authMode: 'oidc'
+      // }
+    )
+    console.log('Backend Response: ',response);
+    if(response.data){
+      console.log('Backend Context: ',JSON.parse(response.data?.context));
+      console.log('Backend Event: ',JSON.parse(response.data?.event));
+      console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
+    }
+
+    //Client side token retrieval
+    //
 
     //Hard coded for now
     // const options = {
@@ -63,46 +66,46 @@ async function testFunction(code: string){
     // };
 
     //Hard coded for now
-    const clientId = '3mkraeveoupe6pdobo977hjgr7';
-    const clientSecret = 'g6dpi4qn5qgm1e81t6vmbfsda64bhfm8bhdfr6ngrhtg3kep6jg';
-    const credentials = `${clientId}:${clientSecret}`;
+    // const clientId = '3mkraeveoupe6pdobo977hjgr7';
+    // const clientSecret = 'g6dpi4qn5qgm1e81t6vmbfsda64bhfm8bhdfr6ngrhtg3kep6jg';
+    // const credentials = `${clientId}:${clientSecret}`;
 
-    const body = new URLSearchParams({
-      grant_type: 'authorization_code',
-      client_id: clientId,
-      code: code,
-      redirect_uri: 'http://localhost:5173/', 
-      // redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
-    });
+    // const body = new URLSearchParams({
+    //   grant_type: 'authorization_code',
+    //   client_id: clientId,
+    //   code: code,
+    //   redirect_uri: 'http://localhost:5173/', 
+    //   // redirect_uri: 'https://main.d2d1d8kuit8n8u.amplifyapp.com/'
+    // });
     
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${btoa(credentials)}`,
-      },
-      body: body.toString()
-    }
+    // const options = {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/x-www-form-urlencoded',
+    //     'Authorization': `Basic ${btoa(credentials)}`,
+    //   },
+    //   body: body.toString()
+    // }
 
-    async function readStream(readableStream: any) {
-      for await (const chunk of readableStream) {
-        const decoder = new TextDecoder('utf-8');
-        const text = decoder.decode(chunk);
-        return JSON.parse(text);
-      }
-    }
+    // async function readStream(readableStream: any) {
+    //   for await (const chunk of readableStream) {
+    //     const decoder = new TextDecoder('utf-8');
+    //     const text = decoder.decode(chunk);
+    //     return JSON.parse(text);
+    //   }
+    // }
 
-    try{
-        console.log('options', options);
-        const response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
-        console.log('response cognito', response);
-        const tokenResponse = await readStream(response.body);
-        console.log('response token', tokenResponse)
-    }
-    catch (error){
-        console.log("failed to exchange cognito code to token");
-        console.log('error',error);
-    }
+    // try{
+    //     console.log('options', options);
+    //     const response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
+    //     console.log('response cognito', response);
+    //     const tokenResponse = await readStream(response.body);
+    //     console.log('response token', tokenResponse)
+    // }
+    // catch (error){
+    //     console.log("failed to exchange cognito code to token");
+    //     console.log('error',error);
+    // }
     } catch (error) {
       console.error(error);
       console.log('error',error);

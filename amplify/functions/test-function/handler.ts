@@ -14,7 +14,6 @@ export type LambdaResult = {
 export const handler: Handler = async (event, context): Promise<LambdaResult> => {
   // your function code goes here
   const { code } = event.arguments;
-  let response = null;
   try{
     //Hard coded for now
     const clientId = '3mkraeveoupe6pdobo977hjgr7';
@@ -38,10 +37,21 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
       body: body.toString()
     }
 
+    async function readStream(readableStream: any) {
+      for await (const chunk of readableStream) {
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(chunk);
+        return JSON.parse(text);
+      }
+    }
+
     try{
         console.log('options', options);
-        response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
+        const response = await fetch('https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/oauth2/token', options);  
         console.log(response);
+        const tokenResponse = await readStream(response.body);
+        console.log('response token', tokenResponse)
+        return {event: event, context:context, tokenResponse: tokenResponse};
     }
     catch (error){
         console.log("failed to exchange cognito code to token");
@@ -56,5 +66,5 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
   console.log('Event: ', event);
   console.log('Context: ', context)
 
-  return {event: event, context:context, tokenResponse: response};
+  return {event: event, context:context, tokenResponse: null};
 };
