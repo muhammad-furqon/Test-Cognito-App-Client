@@ -1,15 +1,13 @@
 // import { useEffect, useState } from "react";
 // import type { Schema } from "../amplify/data/resource";
 // import { generateClient } from "aws-amplify/data";
-// import { useAuth } from "react-oidc-context";
+import { useAuth } from "react-oidc-context";
 import outputs from "../amplify_outputs.json"
 import { Amplify } from "aws-amplify"
-import { generateClient } from "aws-amplify/api"
-import type { Schema } from "../amplify/data/resource"
-// import styled from 'styled-components';
+import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 Amplify.configure(outputs)
-const client = generateClient<Schema>()
+// const client = generateClient<Schema>()
 
 // Get query variable
 function getQueryVariable(variable: string)
@@ -27,23 +25,42 @@ function getQueryVariable(variable: string)
 }
 
 //Call backend testFunction using the queries
-async function testFunction(code: string){
+async function testFunction(access_token: string){
   try {
-    //Call testFunction 
-    const response = await client.queries.testFunction(
-      {
-        code: code 
-      },
-      // { 
-      //   authMode: 'oidc'
-      // }
-    )
-    console.log('Backend Response: ',response);
-    if(response.data){
-      console.log('Backend Context: ',JSON.parse(response.data?.context));
-      console.log('Backend Event: ',JSON.parse(response.data?.event));
-      console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
+    console.log(access_token);
+    // Verifier that expects valid access tokens:
+    const verifier = CognitoJwtVerifier.create({
+      userPoolId: "ap-northeast-1_KYJVPWPTn",
+      tokenUse: "access",
+      clientId: "3mkraeveoupe6pdobo977hjgr7",
+    });
+
+    try {
+      const payload = await verifier.verify(
+        access_token // the JWT as string
+      );
+      console.log("<CLIENT SIDE> Token is valid. Payload:", payload);
+      console.log("<CLIENT SIDE> Cognito user id (sub):", payload.sub);
+    } catch {
+      console.log("Token not valid!");
     }
+
+
+    //Call testFunction 
+    // const response = await client.queries.testFunction(
+    //   {
+    //     code: code 
+    //   },
+    //   // { 
+    //   //   authMode: 'oidc'
+    //   // }
+    // )
+    // console.log('Backend Response: ',response);
+    // if(response.data){
+    //   console.log('Backend Context: ',JSON.parse(response.data?.context));
+    //   console.log('Backend Event: ',JSON.parse(response.data?.event));
+    //   console.log('Backend Token Response: ',JSON.parse(response.data?.tokenResponse));
+    // }
 
     //Client side token retrieval
     //
@@ -123,49 +140,51 @@ async function testFunction(code: string){
 // App.js
 function App() {
   const code = getQueryVariable('code');
-  // // const code = getCookieValue('code')
+  // const code = getCookieValue('code')
 
-  // dev: auth currently not in used
-  // // const auth = useAuth();
+  // dev: use auth
+  const auth = useAuth();
 
   const signOutRedirect = () => {
     const clientId = "3mkraeveoupe6pdobo977hjgr7";
     const logoutUri = "<logout uri>";
-    const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
-    // const cognitoDomain = "http://localhost:5173/";
+    // const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    const cognitoDomain = "http://localhost:5173/";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
-  const signInRedirect = () => {
-    const clientId = "3mkraeveoupe6pdobo977hjgr7";
-    const redirectUri = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
-    // const redirectUri = "http://localhost:5173/";
-    window.location.assign(`https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/login?client_id=${clientId}&response_type=code&scope=email+openid&redirect_uri=${redirectUri}`);
-  };
+  // Use auth sign in instead
+  // const signInRedirect = () => {
+  //   const clientId = "3mkraeveoupe6pdobo977hjgr7";
+  //   // const redirectUri = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+  //   const redirectUri = "http://localhost:5173/";
+  //   window.location.assign(`https://lambda-furl-d2d1d8kuit8n8u.auth.ap-northeast-1.amazoncognito.com/login?client_id=${clientId}&response_type=code&scope=email+openid&redirect_uri=${redirectUri}`);
+  // };
 
-  // // console.log(`Code: ${code},\nQuery var: ${queryVar},\nLocation: ${location}`);
   console.log(`Code ${code}`);
-  if(code){
+  console.log(`ID Token: ${auth.user?.id_token},\nAccess Token: ${auth.user?.access_token},\nRefresh Token: ${auth.user?.refresh_token}`);
+  if(auth.isAuthenticated){
+    const access_token = auth.user?.access_token;
     return (
       <div>
-        <pre> Code: {code} </pre>
+        <pre> Hello: {auth.user?.profile.email} </pre>
+        {/* <pre> Code: {code} </pre> */}
         {/* <pre> ID Token: {auth.user?.id_token} </pre>
         <pre> Access Token: {auth.user?.access_token} </pre>
         <pre> Refresh Token: {auth.user?.refresh_token} </pre> */}
 
-
-        {code && (
-          <button onClick={() => testFunction(code)}>Test function</button>
+        {access_token && (
+          <button onClick={() => testFunction(access_token)}>Test function</button>
         )}
 
-        <button onClick={() => signOutRedirect()}>Sign out</button>
+        <button onClick={() => auth.removeUser()}>Sign out</button>
       </div>
     );
   }
 
   return (
     <div>
-      <button onClick={() => signInRedirect()}>Sign in</button>
+      <button onClick={() => auth.signinRedirect()}>Sign in</button>
       <button onClick={() => signOutRedirect()}>Sign out</button>
     </div>
   );
