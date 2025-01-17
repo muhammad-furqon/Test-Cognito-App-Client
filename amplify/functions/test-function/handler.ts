@@ -19,6 +19,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
   try{
     console.log(accessToken);
     // Verifier that expects valid access tokens:
+    // Hard coded for now
     const verifier = CognitoJwtVerifier.create({
       userPoolId: "ap-northeast-1_KYJVPWPTn",
       tokenUse: "access",
@@ -28,6 +29,7 @@ export const handler: Handler = async (event, context): Promise<LambdaResult> =>
     const payload = await verifier.verify(
       accessToken // the JWT as string
     );
+    console.log("Token is valid. Payload:", payload);
     return {event: event, context:context, tokenResponse: payload};
   } catch (error) {
     console.log('Error: ', error);
