@@ -25,9 +25,9 @@ function getQueryVariable(variable: string)
 }
 
 //Call backend testFunction using the queries
-async function testFunction(access_token: string){
+async function testFunction(accessToken: string){
   try {
-    console.log(access_token);
+    console.log(accessToken);
     // Verifier that expects valid access tokens:
     const verifier = CognitoJwtVerifier.create({
       userPoolId: "ap-northeast-1_KYJVPWPTn",
@@ -37,7 +37,7 @@ async function testFunction(access_token: string){
 
     try {
       const payload = await verifier.verify(
-        access_token // the JWT as string
+        accessToken // the JWT as string
       );
       console.log("<CLIENT SIDE> Token is valid. Payload:", payload);
       console.log("<CLIENT SIDE> Cognito user id (sub):", payload.sub);
@@ -148,8 +148,8 @@ function App() {
   const signOutRedirect = () => {
     const clientId = "3mkraeveoupe6pdobo977hjgr7";
     const logoutUri = "<logout uri>";
-    // const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
-    const cognitoDomain = "http://localhost:5173/";
+    const cognitoDomain = "https://main.d2d1d8kuit8n8u.amplifyapp.com/";
+    // const cognitoDomain = "http://localhost:5173/";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
@@ -164,17 +164,17 @@ function App() {
   console.log(`Code ${code}`);
   console.log(`ID Token: ${auth.user?.id_token},\nAccess Token: ${auth.user?.access_token},\nRefresh Token: ${auth.user?.refresh_token}`);
   if(auth.isAuthenticated){
-    const access_token = auth.user?.access_token;
+    const accessToken = auth.user?.access_token;
     return (
       <div>
         <pre> Hello: {auth.user?.profile.email} </pre>
         {/* <pre> Code: {code} </pre> */}
         {/* <pre> ID Token: {auth.user?.id_token} </pre>
-        <pre> Access Token: {auth.user?.access_token} </pre>
+        <pre> Access Token: {auth.user?.accessToken} </pre>
         <pre> Refresh Token: {auth.user?.refresh_token} </pre> */}
 
-        {access_token && (
-          <button onClick={() => testFunction(access_token)}>Test function</button>
+        {accessToken && (
+          <button onClick={() => testFunction(accessToken)}>Test function</button>
         )}
 
         <button onClick={() => auth.removeUser()}>Sign out</button>

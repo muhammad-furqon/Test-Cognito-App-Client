@@ -17,7 +17,7 @@ const schema = a.schema({
   testFunction: a
     .query()
     .arguments({
-      code: a.string(),
+      accessToken: a.string(),
     })
     .returns(a.customType<LambdaResult>({
       event: a.json(),
